@@ -2,8 +2,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const basket = {
-    x: canvas.width / 2 - 50,
-    y: canvas.height - 50,
     width: 100,
     height: 20,
     speed: 10,
@@ -11,14 +9,19 @@ const basket = {
 };
 
 const fruit = {
-    x: Math.random() * (canvas.width - 20),
-    y: 0,
     width: 20,
     height: 20,
     speed: 2
 };
 
 let score = 0;
+
+function resizeCanvas() {
+    canvas.width = Math.min(window.innerWidth - 20, 800);
+    canvas.height = canvas.width * 0.75; // Maintain aspect ratio of 4:3
+    basket.x = canvas.width / 2 - basket.width / 2;
+    basket.y = canvas.height - basket.height - 10;
+}
 
 function drawBasket() {
     ctx.fillStyle = 'blue';
@@ -94,7 +97,9 @@ function keyUp(e) {
     }
 }
 
+window.addEventListener('resize', resizeCanvas);
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
 
+resizeCanvas();
 update();
