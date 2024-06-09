@@ -8,10 +8,12 @@ const basket = {
     dx: 0
 };
 
-const fruit = {
+let fruit = {
     width: 20,
     height: 20,
-    speed: 2
+    speed: 2,
+    x: Math.random() * (canvas.width - 20),
+    y: 0
 };
 
 let score = 0;
@@ -49,8 +51,7 @@ function moveFruit() {
     fruit.y += fruit.speed;
 
     if (fruit.y + fruit.height > canvas.height) {
-        fruit.x = Math.random() * (canvas.width - fruit.width);
-        fruit.y = 0;
+        resetFruit();
     }
 
     if (
@@ -60,9 +61,13 @@ function moveFruit() {
     ) {
         score++;
         document.getElementById('score').textContent = score;
-        fruit.x = Math.random() * (canvas.width - fruit.width);
-        fruit.y = 0;
+        resetFruit();
     }
+}
+
+function resetFruit() {
+    fruit.x = Math.random() * (canvas.width - fruit.width);
+    fruit.y = 0;
 }
 
 function clearCanvas() {
