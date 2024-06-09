@@ -1,0 +1,99 @@
+AWSTemplateFormatVersion: 2010-09-09
+# For Subdomain of wakaru-blog.com
+
+Parameters:
+  Env:
+    Type: String
+    Default: test
+  System:
+    Type: String
+    Default: test-system
+  Region:
+    Type: String
+    Default: tokyo      
+  BucketName:
+    Type: String
+    Default: test         
+  SSLId:
+    Type: String
+    Default: <SSLId>
+  # Domain: 
+  #   Type: String
+  #   Default: www.test.com               
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # S3 bucket
+  #-----------------------------------------------------------------------------
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${BucketName} 
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - s3:GetObject
+            Effect: Allow
+            Resource:
+              - !Sub arn:aws:s3:::${S3Bucket}/*
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}
+
+  #-----------------------------------------------------------------------------
+  # CloudFront 
+  #-----------------------------------------------------------------------------
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: !Sub ${System}-${Env}-cloudfront-distribution-{$BucketName}
+        Origins:
+          - DomainName: !GetAtt S3Bucket.RegionalDomainName
+            Id: S3Origin
+            OriginAccessControlId: !GetAtt OAC.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        Enabled: true
+        DefaultRootObject: index.html #S3バケットのルートに配置する
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # S3に対して利用する場合はこれが推奨されている
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+        PriceClass: PriceClass_200 #100ではアジアが含まれない。Allは全リージョン。
+        HttpVersion: http2and3 #全httpバージョンに適応するため
+        Aliases:
+          - !Sub "${BucketName}"
+        ViewerCertificate:
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+          AcmCertificateArn: !Sub arn:aws:acm:us-east-1:${AWS::AccountId}:certificate/${SSLId}  
+
+  OAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Description: Access Control
+        Name: !Sub ${System}-${Env}-oac
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
