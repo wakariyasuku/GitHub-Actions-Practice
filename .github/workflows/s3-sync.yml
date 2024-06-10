@@ -19,14 +19,14 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}          
           aws-region: ap-northeast-1
 
-      - name: sync to S3
-        env: 
-          S3_SYNC_BUCKET: ${{ secrets.S3_BUCKET }}
-        run: |
-          aws s3 sync . s3://$S3_SYNC_BUCKET/ --delete --exclude "README.md" --exclude ".git/*" --exclude ".github/*" --exclude ".gitignore"  --exclude "AWS"
-
       - name: Invalidate CloudFront cache
         env: 
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
           aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+
+      - name: sync to S3
+        env: 
+          S3_SYNC_BUCKET: ${{ secrets.S3_BUCKET }}
+        run: |
+          aws s3 sync . s3://$S3_SYNC_BUCKET/ --delete --exclude "README.md" --exclude ".git/*" --exclude ".github/*" --exclude ".gitignore"  --exclude "AWS"
