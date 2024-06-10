@@ -8,17 +8,20 @@ const basket = {
     dx: 0
 };
 
-let fruit = {
-    width: 20,
-    height: 20,
-    speed: 2,
-    x: Math.random() * (canvas.width - 20),
-    y: 0
-};
+const fruitImages = ['banana', 'grape'];
+let fruits = [];
+const fruitWidth = 40;
+const fruitHeight = 40;
 
 let score = 0;
 let timer = 30;
 let isGameRunning = false;
+
+const bananaImg = new Image();
+bananaImg.src = 'images/banana.png';
+
+const grapeImg = new Image();
+grapeImg.src = 'images/grape.png';
 
 function startGame() {
     if (!isGameRunning) {
@@ -30,7 +33,7 @@ function startGame() {
         timer = 30;
         updateScoreDisplay();
         updateTimerDisplay();
-        resetFruit();
+        resetFruits();
         update();
         countdown();
     }
@@ -48,9 +51,12 @@ function drawBasket() {
     ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
 }
 
-function drawFruit() {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(fruit.x, fruit.y, fruit.width, fruit.height);
+function drawFruit(fruit) {
+    if (fruit.type === 'banana') {
+        ctx.drawImage(bananaImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
+    } else if (fruit.type === 'grape') {
+        ctx.drawImage(grapeImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
+    }
 }
 
 function moveBasket() {
@@ -65,27 +71,37 @@ function moveBasket() {
     }
 }
 
-function moveFruit() {
-    fruit.y += fruit.speed;
+function moveFruits() {
+    fruits.forEach(fruit => {
+        fruit.y += fruit.speed;
 
-    if (fruit.y + fruit.height > canvas.height) {
-        resetFruit();
-    }
+        if (fruit.y + fruitHeight > canvas.height) {
+            resetFruit(fruit);
+        }
 
-    if (
-        fruit.y + fruit.height > basket.y &&
-        fruit.x < basket.x + basket.width &&
-        fruit.x + fruit.width > basket.x
-    ) {
-        score++;
-        document.getElementById('score').textContent = score;
-        resetFruit();
-    }
+        if (
+            fruit.y + fruitHeight > basket.y &&
+            fruit.x < basket.x + basket.width &&
+            fruit.x + fruitWidth > basket.x
+        ) {
+            score++;
+            document.getElementById('score').textContent = score;
+            resetFruit(fruit);
+        }
+    });
 }
 
-function resetFruit() {
-    fruit.x = Math.random() * (canvas.width - fruit.width);
+function resetFruit(fruit) {
+    fruit.x = Math.random() * (canvas.width - fruitWidth);
     fruit.y = 0;
+    fruit.type = fruitImages[Math.floor(Math.random() * fruitImages.length)];
+}
+
+function resetFruits() {
+    fruits = [
+        { x: Math.random() * (canvas.width - fruitWidth), y: 0, speed: 2, type: fruitImages[Math.floor(Math.random() * fruitImages.length)] },
+        { x: Math.random() * (canvas.width - fruitWidth), y: 0, speed: 2.5, type: fruitImages[Math.floor(Math.random() * fruitImages.length)] }
+    ];
 }
 
 function clearCanvas() {
@@ -122,9 +138,9 @@ function endGame() {
 function update() {
     clearCanvas();
     drawBasket();
-    drawFruit();
+    fruits.forEach(drawFruit);
     moveBasket();
-    moveFruit();
+    moveFruits();
     if (isGameRunning) {
         requestAnimationFrame(update);
     }
@@ -149,9 +165,24 @@ function keyUp(e) {
     }
 }
 
+function handleTouchStart(e) {
+    const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    if (touchX > basket.x + basket.width / 2) {
+        basket.dx = basket.speed;
+    } else {
+        basket.dx = -basket.speed;
+    }
+}
+
+function handleTouchEnd() {
+    basket.dx = 0;
+}
+
 window.addEventListener('resize', resizeCanvas);
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchend', handleTouchEnd);
 document.getElementById('start-button').addEventListener('click', startGame);
 document.getElementById('restart-button').addEventListener('click', startGame);
 
