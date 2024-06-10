@@ -27,6 +27,6 @@ jobs:
 
       - name: sync to S3
         env: 
-          S3_SYNC_BUCKET: ${{ secrets.S3_BUCKET }}
+          S3_SYNC_BUCKET: ${{ secrets.S3_SYNC_BUCKET }}
         run: |
-          aws s3 sync ./Frontend/ s3://$S3_SYNC_BUCKET/ --delete --exclude "README.md" --exclude ".git/*" --exclude ".github/*" --exclude ".gitignore"
+          aws s3 sync ./Frontend/ s3://$S3_SYNC_BUCKET/
