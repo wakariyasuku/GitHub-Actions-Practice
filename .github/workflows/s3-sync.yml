@@ -25,6 +25,12 @@ jobs:
         run: |
           aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
+      - name: Debug S3 bucket name
+        env: 
+          S3_SYNC_BUCKET: ${{ secrets.S3_SYNC_BUCKET }}
+        run: |
+          echo "S3_SYNC_BUCKET is set to $S3_SYNC_BUCKET"          
+
       - name: sync to S3
         env: 
           S3_SYNC_BUCKET: ${{ secrets.S3_SYNC_BUCKET }}
