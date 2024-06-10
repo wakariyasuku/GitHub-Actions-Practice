@@ -2,8 +2,6 @@ name: Amazon S3 sync
 
 on:
   push:
-    branches:
-      - master
 
 jobs:
   build:
