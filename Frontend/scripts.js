@@ -17,6 +17,24 @@ let fruit = {
 };
 
 let score = 0;
+let timer = 30;
+let isGameRunning = false;
+
+function startGame() {
+    if (!isGameRunning) {
+        isGameRunning = true;
+        document.getElementById('start-button').style.display = 'none';
+        document.getElementById('game-over-message').style.display = 'none';
+        document.getElementById('restart-button').style.display = 'none';
+        score = 0;
+        timer = 30;
+        updateScoreDisplay();
+        updateTimerDisplay();
+        resetFruit();
+        update();
+        countdown();
+    }
+}
 
 function resizeCanvas() {
     canvas.width = Math.min(window.innerWidth - 20, 800);
@@ -74,13 +92,42 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function updateScoreDisplay() {
+    document.getElementById('score').textContent = score;
+}
+
+function updateTimerDisplay() {
+    document.getElementById('timer').textContent = timer;
+}
+
+function countdown() {
+    const interval = setInterval(() => {
+        timer--;
+        updateTimerDisplay();
+
+        if (timer <= 0) {
+            clearInterval(interval);
+            endGame();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    isGameRunning = false;
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('game-over-message').style.display = 'block';
+    document.getElementById('restart-button').style.display = 'block';
+}
+
 function update() {
     clearCanvas();
     drawBasket();
     drawFruit();
     moveBasket();
     moveFruit();
-    requestAnimationFrame(update);
+    if (isGameRunning) {
+        requestAnimationFrame(update);
+    }
 }
 
 function keyDown(e) {
@@ -105,6 +152,7 @@ function keyUp(e) {
 window.addEventListener('resize', resizeCanvas);
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
+document.getElementById('start-button').addEventListener('click', startGame);
+document.getElementById('restart-button').addEventListener('click', startGame);
 
 resizeCanvas();
-update();

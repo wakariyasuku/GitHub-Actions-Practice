@@ -8,8 +8,13 @@
 </head>
 <body>
     <div id="game-container">
+        <h1>Fruit Catch Game</h1>
         <canvas id="gameCanvas"></canvas>
-        <p>Score: <span id="score">0</span></p>
+        <p id="score-display">Score: <span id="score">0</span></p>
+        <p id="timer-display">Time: <span id="timer">30</span> sec</p>
+        <button id="start-button">Start</button>
+        <p id="game-over-message" style="display: none;">Game Over! Your score: <span id="final-score">0</span></p>
+        <button id="restart-button" style="display: none;">Play Again</button>
     </div>
     <script src="scripts.js"></script>
 </body>

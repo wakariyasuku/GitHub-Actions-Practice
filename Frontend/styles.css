@@ -3,7 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: grey;
+    background-color: #f0f0f0;
     font-family: Arial, sans-serif;
     margin: 0;
 }
@@ -23,6 +23,21 @@ canvas {
 p {
     font-size: 20px;
     margin-top: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 @media (max-width: 600px) {
