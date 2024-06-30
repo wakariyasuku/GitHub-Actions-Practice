@@ -51,7 +51,6 @@ function drawBasket() {
     ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
 }
 
-// modify
 function drawFruit(fruit) {
     if (fruit.type === 'banana') {
         ctx.drawImage(bananaImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
