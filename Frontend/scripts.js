@@ -8,6 +8,7 @@ const basket = {
     dx: 0
 };
 
+// modify
 const fruitImages = ['banana', 'grape', 'apple'];
 let fruits = [];
 const fruitWidth = 40;
@@ -17,6 +18,7 @@ let score = 0;
 let timer = 30;
 let isGameRunning = false;
 
+// modify
 const bananaImg = new Image();
 bananaImg.src = 'images/banana.png';
 
@@ -54,6 +56,7 @@ function drawBasket() {
     ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
 }
 
+// modify
 function drawFruit(fruit) {
     if (fruit.type === 'banana') {
         ctx.drawImage(bananaImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
