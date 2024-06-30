@@ -8,8 +8,7 @@ const basket = {
     dx: 0
 };
 
-// modify
-const fruitImages = ['banana', 'grape', 'apple'];
+const fruitImages = ['banana', 'grape'];
 let fruits = [];
 const fruitWidth = 40;
 const fruitHeight = 40;
@@ -18,15 +17,11 @@ let score = 0;
 let timer = 30;
 let isGameRunning = false;
 
-// modify
 const bananaImg = new Image();
 bananaImg.src = 'images/banana.png';
 
 const grapeImg = new Image();
 grapeImg.src = 'images/grape.png';
-
-const appleImg = new Image();
-appleImg.src = 'images/apple.png';
 
 function startGame() {
     if (!isGameRunning) {
@@ -62,8 +57,6 @@ function drawFruit(fruit) {
         ctx.drawImage(bananaImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
     } else if (fruit.type === 'grape') {
         ctx.drawImage(grapeImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
-    } else if (fruit.type === 'apple') {
-        ctx.drawImage(appleImg, fruit.x, fruit.y, fruitWidth, fruitHeight);
     }
 }
 
